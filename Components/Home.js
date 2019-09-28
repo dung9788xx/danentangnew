@@ -1,0 +1,102 @@
+import React, { Component } from 'react';
+import {TouchableOpacity, Image, View, Text, FlatList } from 'react-native';
+import ActionButton, { ActionButtonItem } from 'react-native-action-button';
+import Swipeout from 'react-native-swipeout';
+var swipeoutBtns = [
+    {
+      text: 'Button'
+    }
+  ]
+export default class Home extends Component {
+    constructor() {
+        super() 
+      
+       
+        this.state = {
+        
+            data: [],
+          iduser:null
+        }
+        this.gotoDetail=this.gotoDetail.bind(this);
+    }
+    renderavatar(item){
+            if(item.isavatar=="1"){
+               return( <Image 
+                style={{ width: 50, height: 50, alignSelf: 'center',marginLeft:20,borderRadius:25,overflow: 'hidden' }} source={{uri: 'http://192.168.1.170/React/avatar/up/'+item.imglink}} />
+                )
+            }else  return( <Image 
+                style={{ width: 50, height: 50, alignSelf: 'center',marginLeft:20 }} source={require("../img/user.png")} />
+                )
+    }
+    Item(item) {
+        return (
+            <Swipeout style={{flex:1, backgroundColor: 'white',}} right={swipeoutBtns}>
+            <View style={{ flexDirection: 'row', flex: 1, height: 70, borderBottomWidth: 1, borderBottomColor: '#D5D8DC' }} >
+              <TouchableOpacity style={{flex:1,flexDirection:'row'}} onPress={()=>this.gotoDetail(item)}>
+                  
+               {this.renderavatar(item)}
+                <Text style={{ alignSelf: 'center' ,marginLeft:10,fontSize:18}}> {item.ten}</Text>
+              </TouchableOpacity>
+             
+            </View>
+            </Swipeout>
+        );
+    }
+     gotoDetail(item){
+    
+     this.props.navigation.navigate('ContactDetail',{item:item})
+    }
+    getData(iduser) {
+        fetch('http://192.168.1.170/React/getList.php', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id:iduser
+
+            }),
+        }).then((response) => response.json())
+            .then((responseJson) => {
+               
+                this.setState(
+                    () => {
+                        return {
+                            data: responseJson
+                        }
+                    }
+                )
+
+            })
+            .catch((error) => {
+                console.warn(error);
+            });
+    }
+    render() {
+        return (
+         <View style={{flex:1}}>
+                <FlatList
+                onIte
+                
+                data={this.state.data}
+                renderItem={({ item }) =>this.Item(item)}
+                keyExtractor={item => item.id}
+            />
+            <ActionButton   buttonColor="rgba(231,76,60,1)" onPress={
+                ()=> this.props.navigation.navigate('AddContact',{iduser:this.state.iduser})
+            } >
+               
+            </ActionButton>
+         </View>
+        );
+    }
+    componentDidMount(){
+        const { navigation } = this.props;  
+        const id = navigation.getParam('iduser', 'NO-User');  
+        this.setState({
+            iduser:id
+        })
+        this.getData(id)
+    }
+}
