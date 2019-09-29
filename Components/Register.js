@@ -164,7 +164,9 @@ export default class RegisterScre extends Component {
   render() {
     return (
       <View style={style.body}>
+  <Image style={{width:300,height:150,alignSelf:'center',marginBottom:20}} source={require('../img/logo.png')}>
 
+</Image>
         <TextInput
           ref="username"
           placeholder="Tên tài khoản"
@@ -248,6 +250,7 @@ export default class RegisterScre extends Component {
 style = StyleSheet.create({
 
   body: {
+    paddingBottom:100,
     backgroundColor: '#56beff',
     flex: 1,
     justifyContent: 'center'

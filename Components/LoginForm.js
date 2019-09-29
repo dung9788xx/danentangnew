@@ -139,7 +139,9 @@ export class Login extends Component {
   
     return (
       <View style={style.body}>
+          <Image style={{width:300,height:150,alignSelf:'center',marginBottom:20}} source={require('../img/logo.png')}>
 
+          </Image>
         <TextInput
           ref="username"
           placeholder="Tên tài khoản"
