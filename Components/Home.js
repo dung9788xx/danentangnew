@@ -1,50 +1,74 @@
 import React, { Component } from 'react';
-import {TouchableOpacity, Image, View, Text, FlatList } from 'react-native';
+import { StyleSheet, TouchableOpacity, TextInput, Image, View, Text, FlatList } from 'react-native';
 import ActionButton, { ActionButtonItem } from 'react-native-action-button';
 import Swipeout from 'react-native-swipeout';
+import Icon from 'react-native-vector-icons/Ionicons';
 var swipeoutBtns = [
     {
-      text: 'Button'
+        text: 'Xóa',
+        onPress: () => alert('vmm'),
+        type: 'delete',
+        underlayColor: 'blue'
     }
-  ]
+]
 export default class Home extends Component {
     constructor() {
-        super() 
-      
-       
+        super()
+
+
         this.state = {
-        
+            arrayholder: [],
+            text: "",
             data: [],
-          iduser:null
+            iduser: null
         }
-        this.gotoDetail=this.gotoDetail.bind(this);
+        this.gotoDetail = this.gotoDetail.bind(this);
     }
-    renderavatar(item){
-            if(item.isavatar=="1"){
-               return( <Image 
-                style={{ width: 50, height: 50, alignSelf: 'center',marginLeft:20,borderRadius:25,overflow: 'hidden' }} source={{uri: 'http://192.168.1.170/React/avatar/up/'+item.imglink}} />
-                )
-            }else  return( <Image 
-                style={{ width: 50, height: 50, alignSelf: 'center',marginLeft:20 }} source={require("../img/user.png")} />
-                )
+    SearchFilterFunction(text) {
+        //passing the inserted text in textinput
+        const newData = this.state.arrayholder.filter(function (item) {
+            //applying filter for the inserted text in search bar
+            const itemData = item.ten ? item.ten.toUpperCase() : ''.toUpperCase();
+            const textData = text.toUpperCase();
+            return itemData.indexOf(textData) > -1;
+        });
+
+        this.setState({
+            //setting the filtered newData on datasource
+            //After setting the data it will automatically re-render the view
+            data: newData,
+            text: text,
+        });
+    }
+    renderavatar(item) {
+        if (item.isavatar == "1") {
+            return (<Image
+                style={{ width: 50, height: 50, alignSelf: 'center', marginLeft: 20, borderRadius: 25, overflow: 'hidden' }} source={{ uri: 'http://192.168.1.170/React/avatar/up/' + item.imglink }} />
+            )
+        } else return (<Image
+            style={{ width: 50, height: 50, alignSelf: 'center', marginLeft: 20 }} source={require("../img/user.png")} />
+        )
     }
     Item(item) {
         return (
-            <Swipeout style={{flex:1, backgroundColor: 'white',}} right={swipeoutBtns}>
-            <View style={{ flexDirection: 'row', flex: 1, height: 70, borderBottomWidth: 1, borderBottomColor: '#D5D8DC' }} >
-              <TouchableOpacity style={{flex:1,flexDirection:'row'}} onPress={()=>this.gotoDetail(item)}>
-                  
-               {this.renderavatar(item)}
-                <Text style={{ alignSelf: 'center' ,marginLeft:10,fontSize:18}}> {item.ten}</Text>
-              </TouchableOpacity>
-             
-            </View>
+            <Swipeout
+                autoClose={true}
+                style={{ flex: 1, backgroundColor: 'white', }} right={swipeoutBtns}>
+                <View style={{ flexDirection: 'row', flex: 1, height: 70, borderBottomWidth: 1, borderBottomColor: '#D5D8DC' }} >
+                    <TouchableOpacity style={{ flex: 1, flexDirection: 'row' }} onPress={() => this.gotoDetail(item)}>
+
+                        {this.renderavatar(item)}
+                        <Text style={{ alignSelf: 'center', marginLeft: 10, fontSize: 18 }}> {item.ten}</Text>
+                    </TouchableOpacity>
+
+                </View>
             </Swipeout>
+
         );
     }
-     gotoDetail(item){
-    
-     this.props.navigation.navigate('ContactDetail',{item:item})
+    gotoDetail(item) {
+
+        this.props.navigation.navigate('ContactDetail', { item: item })
     }
     getData(iduser) {
         fetch('http://192.168.1.170/React/getList.php', {
@@ -54,15 +78,16 @@ export default class Home extends Component {
                 'Content-Type': 'application/json',
             },
             body: JSON.stringify({
-                id:iduser
+                id: iduser
 
             }),
         }).then((response) => response.json())
             .then((responseJson) => {
-               
+
                 this.setState(
                     () => {
                         return {
+                            arrayholder: responseJson,
                             data: responseJson
                         }
                     }
@@ -75,28 +100,57 @@ export default class Home extends Component {
     }
     render() {
         return (
-         <View style={{flex:1}}>
+            <View style={{ flex: 1 }}>
+
+                <View style={{ height: 70, borderBottomWidth: 1, flexDirection: 'row', borderBottomColor: '#D5D8DC' }}>
+                    <View style={{ flex: 11 }}>
+                        <Text style={{ flex: 1, alignSelf: 'center', justifyContent: 'center', marginTop: 20, fontSize: 20 }}>Liên hệ</Text>
+                    </View>
+                    <Icon style={{ flex: 1, fontSize: 30, alignSelf: 'center' }} name="md-more" />
+                </View>
+                <View style={this.style.input}>
+                    <Icon style={{ alignSelf: 'center' }} name="ios-search" size={20} color="#000" />
+                    <TextInput
+                        style={{ flex: 1, marginLeft: 5 }}
+                        onChangeText={text => this.SearchFilterFunction(text)}
+                        value={this.state.text}
+
+                        underlineColorAndroid="transparent"
+                        placeholder="Tìm kiếm"
+                    />
+                </View>
+
                 <FlatList
-                onIte
-                
-                data={this.state.data}
-                renderItem={({ item }) =>this.Item(item)}
-                keyExtractor={item => item.id}
-            />
-            <ActionButton   buttonColor="rgba(231,76,60,1)" onPress={
-                ()=> this.props.navigation.navigate('AddContact',{iduser:this.state.iduser})
-            } >
-               
-            </ActionButton>
-         </View>
+                    onIte
+
+                    data={this.state.data}
+                    renderItem={({ item }) => this.Item(item)}
+                    keyExtractor={item => item.id}
+                />
+                <ActionButton buttonColor="rgba(2,117,216,1)" onPress={
+                    () => this.props.navigation.navigate('AddContact', { iduser: this.state.iduser })
+                } >
+
+                </ActionButton>
+            </View>
         );
     }
-    componentDidMount(){
-        const { navigation } = this.props;  
-        const id = navigation.getParam('iduser', 'NO-User');  
+    componentDidMount() {
+        const { navigation } = this.props;
+        const id = navigation.getParam('iduser', 'NO-User');
         this.setState({
-            iduser:id
+            iduser: id
         })
         this.getData(id)
     }
+    style = StyleSheet.create({
+        input: {
+            flexDirection: 'row',
+            margin: 6,
+            paddingLeft: 25,
+            borderRadius: 7,
+            backgroundColor: '#D5D8DC',
+            borderBottomColor: '#D5D8DC'
+        }
+    })
 }
