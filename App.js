@@ -8,6 +8,7 @@ import AddContact from './Components/AddContact'
 import RegisterScre from './Components/Register'
 import ContactDetail from './Components/ContactDetail'
 import ToQrcode from './Components/ToQrcode'
+import EditContact from './Components/EditContact'
 import {ToastAndroid,Alert,BackHandler
 } from 'react-native'
 
@@ -15,7 +16,7 @@ const AppNavigator = createStackNavigator({
   Login:Login,
   ContactDetail:ContactDetail,
   ToQrcode:ToQrcode,
- 
+  EditContact:EditContact,
   AddContact:AddContact,
   Home: Home,
   RegisterScre :RegisterScre,

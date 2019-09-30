@@ -179,13 +179,9 @@ export class Login extends Component {
           textContentType='password'
           value={this.state.password}
         />
-
         <TouchableHighlight style={[this.style.button, { marginTop: 15 }]}
-       
           onPress={
-
             this.check.bind(this)
-
           }>
           <Text style={{ color: 'white', alignSelf: 'center', fontSize: 18 }}>Đăng nhập</Text>
         </TouchableHighlight>
@@ -201,10 +197,6 @@ export class Login extends Component {
             Đăng ký
                </Text>
         </TouchableOpacity>
-
-
-
-
       </View>
     );
   }
@@ -231,7 +223,6 @@ export class Login extends Component {
       marginTop: 12,
       borderRadius:5,
       height: 45,
-  
       width: 300,
      
     },
@@ -240,7 +231,6 @@ export class Login extends Component {
       fontSize: 25,
       color: 'white',
       marginBottom: 20
-  
     },
     img: {
   

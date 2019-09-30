@@ -1,21 +1,12 @@
 import React, { Component } from 'react';
-import { StyleSheet, TouchableOpacity, TextInput, Image, View, Text, FlatList } from 'react-native';
+import {ToastAndroid,Alert, StyleSheet, TouchableOpacity, TextInput, Image, View, Text, FlatList } from 'react-native';
 import ActionButton, { ActionButtonItem } from 'react-native-action-button';
 import Swipeout from 'react-native-swipeout';
 import Icon from 'react-native-vector-icons/Ionicons';
-var swipeoutBtns = [
-    {
-        text: 'Xóa',
-        onPress: () => alert('vmm'),
-        type: 'delete',
-        underlayColor: 'blue'
-    }
-]
+
 export default class Home extends Component {
     constructor() {
         super()
-
-
         this.state = {
             arrayholder: [],
             text: "",
@@ -24,18 +15,40 @@ export default class Home extends Component {
         }
         this.gotoDetail = this.gotoDetail.bind(this);
     }
+    
+    deleteContact(item){
+        fetch('http://192.168.1.170/React/delete.php', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                id: item.id
+
+            }),
+        }).then((response) => response.json())
+            .then((responseJson) => {
+                    if(responseJson=="1"){
+                        this.getData(this.state.iduser)
+                        ToastAndroid.show('Xóa thành công', ToastAndroid.LONG);
+                    }else{
+                        ToastAndroid.show('Xảy ra lỗi vui lòng thử lại', ToastAndroid.SHORT);
+                    }
+
+            })
+            .catch((error) => {
+                ToastAndroid.show('Xảy ra lỗi vui lòng thử lại', ToastAndroid.SHORT);
+            });
+    }
     SearchFilterFunction(text) {
-        //passing the inserted text in textinput
         const newData = this.state.arrayholder.filter(function (item) {
-            //applying filter for the inserted text in search bar
             const itemData = item.ten ? item.ten.toUpperCase() : ''.toUpperCase();
             const textData = text.toUpperCase();
             return itemData.indexOf(textData) > -1;
         });
 
         this.setState({
-            //setting the filtered newData on datasource
-            //After setting the data it will automatically re-render the view
             data: newData,
             text: text,
         });
@@ -50,6 +63,24 @@ export default class Home extends Component {
         )
     }
     Item(item) {
+       let swipeoutBtns = [
+            {
+                text: 'Xóa',
+                onPress: () => {
+                    Alert.alert(
+                        '',
+                        'Xóa liên hệ này ?',
+                        [
+                          {text: 'Thoát', style: 'cancel'},
+                          {text: 'Xóa', onPress:()=>this.deleteContact(item)},
+                        ],
+                        { cancelable: false }
+                      )
+                },
+                type: 'delete',
+                underlayColor: 'blue'
+            }
+        ]
         return (
             <Swipeout
                 autoClose={true}
