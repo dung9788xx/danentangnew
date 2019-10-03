@@ -3,9 +3,11 @@ import { TouchableOpacity, View, Image, ImageBackground, Text, StyleSheet } from
 import ActionButton, { ActionButtonItem } from 'react-native-action-button';
 import Icon from 'react-native-vector-icons/Ionicons';
 import { Linking } from 'react-native'
+import ServerConfig from './ServerConfig'
 export default class ContactDetail extends Component {
     constructor() {
         super()
+        server=new ServerConfig()
         this.state = {
             contactitem: [],
             imageurl: require('../img/defaultavatar.jpg')
@@ -109,7 +111,7 @@ export default class ContactDetail extends Component {
         const item = navigation.getParam('item', null);
         this.setState({
             contactitem: item,
-            imageurl: item.imglink != "" ? { uri: 'http://192.168.1.170/React/avatar/up/' + item.imglink } : require('../img/defaultavatar.jpg')
+            imageurl: item.imglink != "" ? { uri: server.getServerIp()+'http://192.168.1.170/React/avatar/up/' + item.imglink } : require('../img/defaultavatar.jpg')
         })
 
 

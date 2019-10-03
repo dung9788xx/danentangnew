@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
-import {ToastAndroid,Alert, StyleSheet, TouchableOpacity, TextInput, Image, View, Text, FlatList } from 'react-native';
+import { ToastAndroid, AsyncStorage, Alert, StyleSheet, TouchableOpacity, TextInput, Image, View, Text, FlatList } from 'react-native';
 import ActionButton, { ActionButtonItem } from 'react-native-action-button';
 import Swipeout from 'react-native-swipeout';
 import Icon from 'react-native-vector-icons/Ionicons';
+import ServerConfig from './ServerConfig'
 
 export default class Home extends Component {
     constructor() {
         super()
+        server = new ServerConfig()
         this.state = {
             arrayholder: [],
             text: "",
@@ -15,9 +17,9 @@ export default class Home extends Component {
         }
         this.gotoDetail = this.gotoDetail.bind(this);
     }
-    
-    deleteContact(item){
-        fetch('http://192.168.1.170/React/delete.php', {
+
+    deleteContact(item) {
+        fetch(server.getServerIp() + '/React/delete.php', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -29,12 +31,12 @@ export default class Home extends Component {
             }),
         }).then((response) => response.json())
             .then((responseJson) => {
-                    if(responseJson=="1"){
-                        this.getData(this.state.iduser)
-                        ToastAndroid.show('Xóa thành công', ToastAndroid.LONG);
-                    }else{
-                        ToastAndroid.show('Xảy ra lỗi vui lòng thử lại', ToastAndroid.SHORT);
-                    }
+                if (responseJson == "1") {
+                    this.getData(this.state.iduser)
+                    ToastAndroid.show('Xóa thành công', ToastAndroid.LONG);
+                } else {
+                    ToastAndroid.show('Xảy ra lỗi vui lòng thử lại', ToastAndroid.SHORT);
+                }
 
             })
             .catch((error) => {
@@ -63,7 +65,7 @@ export default class Home extends Component {
         )
     }
     Item(item) {
-       let swipeoutBtns = [
+        let swipeoutBtns = [
             {
                 text: 'Xóa',
                 onPress: () => {
@@ -71,11 +73,11 @@ export default class Home extends Component {
                         '',
                         'Xóa liên hệ này ?',
                         [
-                          {text: 'Thoát', style: 'cancel'},
-                          {text: 'Xóa', onPress:()=>this.deleteContact(item)},
+                            { text: 'Thoát', style: 'cancel' },
+                            { text: 'Xóa', onPress: () => this.deleteContact(item) },
                         ],
                         { cancelable: false }
-                      )
+                    )
                 },
                 type: 'delete',
                 underlayColor: 'blue'
@@ -102,7 +104,7 @@ export default class Home extends Component {
         this.props.navigation.navigate('ContactDetail', { item: item })
     }
     getData(iduser) {
-        fetch('http://192.168.1.170/React/getList.php', {
+        fetch(server.getServerIp() + '/React/getList.php', {
             method: 'POST',
             headers: {
                 Accept: 'application/json',
@@ -168,11 +170,38 @@ export default class Home extends Component {
     }
     componentDidMount() {
         const { navigation } = this.props;
-        const id = navigation.getParam('iduser', 'NO-User');
-        this.setState({
-            iduser: id
-        })
-        this.getData(id)
+        const id = navigation.getParam('iduser', '');
+        if (id != "") {
+            try {
+                AsyncStorage.setItem('iduser', id);
+                this.setState({
+                    iduser: id
+                })
+                this.getData(id)
+            } catch (error) {
+                alert(error)
+            }
+          
+        } else {
+
+         
+                try {
+                    AsyncStorage.getItem('iduser').then(
+                        (value)=>{
+                            this.setState({
+                                iduser: value
+                            })
+                            this.getData(value)
+                        }
+                    );
+                  
+                } catch (error) {
+                    alert(error)
+                }
+            
+        }
+
+
     }
     style = StyleSheet.create({
         input: {

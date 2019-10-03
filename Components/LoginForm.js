@@ -6,11 +6,13 @@ import {Alert,ActivityIndicator,
   TextInput,
   Text, View, TouchableHighlight, TouchableOpacity
 } from 'react-native';
+import ServerConfig from './ServerConfig'
 import { StackNavigator } from 'react-navigation';
 import NetInfo from "@react-native-community/netinfo";
 export class Login extends Component {
   constructor() {
     super()
+    server=new ServerConfig()
     this.checknetwork()
     this.state = {
       iduser:null,
@@ -71,8 +73,7 @@ export class Login extends Component {
         }
       }
     )
-   
-    fetch('http://192.168.1.170/React/login.php', {
+    fetch(server.getServerIp()+'/React/login.php', {
       method: 'POST',
       headers: {
         Accept: 'application/json',
@@ -110,7 +111,7 @@ export class Login extends Component {
 
       })
       .catch((error) => {
-        console.warn(error);
+        alert(error)
       });
 
 

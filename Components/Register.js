@@ -3,14 +3,16 @@ import {
   Alert, ActivityIndicator,
   Button, Image,
   StyleSheet, ImageBackground,
-  TextInput,
+  TextInput,ToastAndroid,
   Text, View, TouchableHighlight, TouchableOpacity
 } from 'react-native';
 import { StackActions, NavigationActions } from 'react-navigation';
 import NetInfo from "@react-native-community/netinfo";
+import ServerConfig from './ServerConfig'
 export default class RegisterScre extends Component {
   constructor() {
     super()
+    server=new ServerConfig()
     this.checknetwork()
     this.state = {
       username: "",
@@ -100,7 +102,7 @@ export default class RegisterScre extends Component {
               }
             }
           )
-          fetch('http://123.123.123.123/React/register.php', {
+          fetch(server.getServerIp()+'/React/register.php', {
             method: 'POST',
             headers: {
               Accept: 'application/json',
@@ -127,14 +129,7 @@ export default class RegisterScre extends Component {
                   actions: [NavigationActions.navigate({ routeName: 'Login' })],
                 });
                 this.props.navigation.dispatch(resetAction)
-                //   Alert.alert(
-                //     '',
-                //     'Đăng ký thành công !  ',
-                //     [  
-                //       {text: 'OK', onPress: () =>  this.props.navigation.push('Login')},
-                //     ],
-                //     {cancelable: false},
-                //   );
+                ToastAndroid.show("Đăng ký thành công",ToastAndroid.LONG)
 
               } else
                 if (responseJson.toString() == "2") {

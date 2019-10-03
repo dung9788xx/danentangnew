@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { TextInput, View, Image, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob'
+import ServerConfig from './ServerConfig'
 var options = {
     title: 'Chọn ảnh đại diện',
     cancelButtonTitle:"Thoát",
@@ -15,6 +16,7 @@ var options = {
 export default class AddContact extends Component {
     constructor() {
         super()
+        server=new ServerConfig()
         this.state = {
             avatarSource: null,
             data: null,
@@ -57,7 +59,7 @@ export default class AddContact extends Component {
     }
     upload() {
      
-        RNFetchBlob.fetch('POST', 'http://192.168.1.170/React/add.php', {
+        RNFetchBlob.fetch('POST', server.getServerIp()+'/React/add.php', {
             Authorization: "Bearer access-token",
             otherHeader: "foo",
             'Content-Type': 'multipart/form-data',

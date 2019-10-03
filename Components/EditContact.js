@@ -57,7 +57,7 @@ export default class EditContact extends Component {
     }
     upload() {
      
-        RNFetchBlob.fetch('POST', 'http://192.168.1.170/React/add.php', {
+        RNFetchBlob.fetch('POST', 'http://192.168.56.1/React/add.php', {
             Authorization: "Bearer access-token",
             otherHeader: "foo",
             'Content-Type': 'multipart/form-data',
