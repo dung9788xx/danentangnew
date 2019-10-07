@@ -180,11 +180,8 @@ export default class Home extends Component {
                 this.getData(id)
             } catch (error) {
                 alert(error)
-            }
-          
+            }       
         } else {
-
-         
                 try {
                     AsyncStorage.getItem('iduser').then(
                         (value)=>{

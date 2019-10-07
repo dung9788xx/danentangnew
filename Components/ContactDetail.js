@@ -63,7 +63,7 @@ export default class ContactDetail extends Component {
         return (
             <View style={this.style.body}>
                 <View style={this.style.ct1}>
-                    <ImageBackground style={{ flex: 1, flexDirection: 'row', borderBottomStartRadius: 10, borderBottomEndRadius: 10, borderColor: '#F2F4F4', overflow: 'hidden' }} source={this.state.imageurl}>
+                    <ImageBackground style={{ flex: 1, flexDirection: 'row', borderBottomStartRadius: 5, borderBottomEndRadius: 5, borderColor: '#F2F4F4', overflow: 'hidden' }} source={this.state.imageurl}>
                         <View style={{ flexDirection: 'row', alignSelf: 'flex-end', marginBottom: 20 }}>
 
                             <Image
@@ -111,7 +111,7 @@ export default class ContactDetail extends Component {
         const item = navigation.getParam('item', null);
         this.setState({
             contactitem: item,
-            imageurl: item.imglink != "" ? { uri: server.getServerIp()+'http://192.168.1.170/React/avatar/up/' + item.imglink } : require('../img/defaultavatar.jpg')
+            imageurl: item.imglink != "" ? { uri: server.getServerIp()+'/React/avatar/up/' + item.imglink } : require('../img/defaultavatar.jpg')
         })
 
 

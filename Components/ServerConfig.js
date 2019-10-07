@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 export default class ServerConfig{
-    server="http://123.123.123.123";
+    server="http://192.168.1.170";
     constructor(){
 
     }
