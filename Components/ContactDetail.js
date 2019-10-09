@@ -95,7 +95,11 @@ export default class ContactDetail extends Component {
                     </View>
 
 
-                    <ActionButton buttonColor="rgba(31, 135, 84,1)" renderIcon={() => { return <Icon style={{ fontSize: 20, color: 'white' }} name="md-create" /> }} >
+                    <ActionButton buttonColor="rgba(31, 135, 84,1)" 
+                    renderIcon={() => { return <Icon style={{ fontSize: 20, color: 'white' }}
+                     name="md-create" /> }}
+                     onPress={  
+                         () => this.props.navigation.push('EditContact', { contactitem: this.state.contactitem })} >
 
 
 
@@ -111,7 +115,7 @@ export default class ContactDetail extends Component {
         const item = navigation.getParam('item', null);
         this.setState({
             contactitem: item,
-            imageurl: item.imglink != "" ? { uri: server.getServerIp()+'/React/avatar/up/' + item.imglink } : require('../img/defaultavatar.jpg')
+            imageurl: item.imglink != "" ? { uri: server.getServerIp()+'/React/avatar/up/' + item.imglink+'?time'+(new Date()).getTime() } : require('../img/defaultavatar.jpg')
         })
 
 

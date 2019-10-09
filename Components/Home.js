@@ -4,7 +4,7 @@ import ActionButton, { ActionButtonItem } from 'react-native-action-button';
 import Swipeout from 'react-native-swipeout';
 import Icon from 'react-native-vector-icons/Ionicons';
 import ServerConfig from './ServerConfig'
-
+import ModalDropdown from 'react-native-modal-dropdown';
 export default class Home extends Component {
     constructor() {
         super()
@@ -58,9 +58,11 @@ export default class Home extends Component {
     renderavatar(item) {
         if (item.isavatar == "1") {
             return (<Image
-                style={{ width: 50, height: 50, alignSelf: 'center', marginLeft: 20, borderRadius: 25, overflow: 'hidden' }} source={{ uri: 'http://192.168.1.170/React/avatar/up/' + item.imglink }} />
+
+                style={{ width: 50, height: 50, alignSelf: 'center', marginLeft: 20, borderRadius: 25, overflow: 'hidden' }} source={{ uri: server.getServerIp() + '/React/avatar/up/' + item.imglink + '?time' + (new Date()).getTime() }} />
             )
         } else return (<Image
+
             style={{ width: 50, height: 50, alignSelf: 'center', marginLeft: 20 }} source={require("../img/user.png")} />
         )
     }
@@ -101,7 +103,7 @@ export default class Home extends Component {
     }
     gotoDetail(item) {
 
-        this.props.navigation.navigate('ContactDetail', { item: item })
+        this.props.navigation.push('ContactDetail', { item: item })
     }
     getData(iduser) {
         fetch(server.getServerIp() + '/React/getList.php', {
@@ -139,7 +141,22 @@ export default class Home extends Component {
                     <View style={{ flex: 11 }}>
                         <Text style={{ flex: 1, alignSelf: 'center', justifyContent: 'center', marginTop: 20, fontSize: 20 }}>Liên hệ</Text>
                     </View>
-                    <Icon style={{ flex: 1, fontSize: 30, alignSelf: 'center' }} name="md-more" />
+
+                    <ModalDropdown
+                        dropdownStyle={{ height: 100 }}
+                        dropdownTextStyle={{ fontSize: 20 }}
+                        onSelect={(id) => {
+                            if (id == 0) {
+                                alert("gt")
+                            }
+                            if (id == 1) {
+                                this.props.navigation.navigate('Login')
+                            }
+
+                        }}
+                        style={{ flex: 1, alignSelf: 'center', width: 150 }} options={['Giớ thiệu', 'Đăng xuất']}>
+                        <Icon style={{ fontSize: 30, alignSelf: 'center' }} name="md-more" />
+                    </ModalDropdown>
                 </View>
                 <View style={this.style.input}>
                     <Icon style={{ alignSelf: 'center' }} name="ios-search" size={20} color="#000" />
@@ -154,8 +171,6 @@ export default class Home extends Component {
                 </View>
 
                 <FlatList
-                    onIte
-
                     data={this.state.data}
                     renderItem={({ item }) => this.Item(item)}
                     keyExtractor={item => item.id}
@@ -180,22 +195,22 @@ export default class Home extends Component {
                 this.getData(id)
             } catch (error) {
                 alert(error)
-            }       
+            }
         } else {
-                try {
-                    AsyncStorage.getItem('iduser').then(
-                        (value)=>{
-                            this.setState({
-                                iduser: value
-                            })
-                            this.getData(value)
-                        }
-                    );
-                  
-                } catch (error) {
-                    alert(error)
-                }
-            
+            try {
+                AsyncStorage.getItem('iduser').then(
+                    (value) => {
+                        this.setState({
+                            iduser: value
+                        })
+                        this.getData(value)
+                    }
+                );
+
+            } catch (error) {
+                alert(error)
+            }
+
         }
 
 

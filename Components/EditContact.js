@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import { TextInput, View, Image, Button, StyleSheet, Text, TouchableOpacity } from 'react-native';
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob'
+import ServerConfig from './ServerConfig'
 var options = {
     title: 'Chọn ảnh đại diện',
     cancelButtonTitle:"Thoát",
@@ -15,6 +16,7 @@ var options = {
 export default class EditContact extends Component {
     constructor() {
         super()
+        server = new ServerConfig()
         this.state = {
             avatarSource: null,
             data: null,
@@ -27,6 +29,9 @@ export default class EditContact extends Component {
             sdt2message:"",
             emailmessage:"",
             contactitem:[],
+            imageurl: require('../img/user.png'),
+            id:"",
+            imgoldlink:""
            
         }
     }
@@ -44,8 +49,8 @@ export default class EditContact extends Component {
                 const source = { uri: response.uri };
                 this.setState({
                     avatarSource: source,
-                    data: response.data
-
+                    data: response.data,
+                    imageurl:source
                 }
                 )
 
@@ -57,19 +62,22 @@ export default class EditContact extends Component {
     }
     upload() {
      
-        RNFetchBlob.fetch('POST', 'http://192.168.56.1/React/add.php', {
+        RNFetchBlob.fetch('POST', server.getServerIp()+'/React/edit.php', {
             Authorization: "Bearer access-token",
             otherHeader: "foo",
             'Content-Type': 'multipart/form-data',
         }, [
-            {name:'iduser',data:this.state.iduser},
+           
+            {name:'id',data:this.state.id},
             {name:'ten',data:this.state.ten},
              {name:'sdt1',data:this.state.sdt1},
             {name:'sdt2',data:this.state.sdt2},
             {name:'email',data:this.state.email},
-           
-            { name: 'image', filename: 'image.png', type: 'image/png', data: this.state.data}
-        ]).then((resp) =>resp.json())
+            {name:'imgoldlink',data:this.state.imgoldlink},
+           {name: 'image', filename: 'image.png', type: 'image/png', data: this.state.data}
+        ]).then(
+            
+            (resp) =>resp.json())
         .then((resjson)=>{
          if(resjson=="1"){
              this.props.navigation.push('Home')
@@ -77,8 +85,9 @@ export default class EditContact extends Component {
              alert("Xảy ra lỗi vui lòng thử lại!")
          }
             
-              
-        })
+         
+    }
+      )
         .catch((err) => {
             alert(err)
         })
@@ -153,7 +162,7 @@ export default class EditContact extends Component {
                     />
                     </TouchableOpacity>
                     <View style={{ flex: 50, flexDirection: 'column', alignSelf: 'center' }}>
-                        <Text style={{ fontSize: 18, alignSelf: 'center', fontWeight: 'bold' }}>Thêm liên hệ</Text>
+                        <Text style={{ fontSize: 18, alignSelf: 'center', fontWeight: 'bold' }}>Sửa liên hệ</Text>
                     </View>
                     <TouchableOpacity onPress={this.check.bind(this)}>
                         <Image style={[style.image, { alignSelf: 'center' }]} source={require("../img/check.png")} />
@@ -164,12 +173,13 @@ export default class EditContact extends Component {
                         onPress={
                             this.showImagePicker.bind(this)
                         }>
-                        <Image
-                            style={{ alignSelf: 'center', width: 100, height: 100 }} source={require("../img/user.png")} />
+                       <Image
+                            style={{ alignSelf: 'center', width: 100, height: 100,borderRadius:50}} source={this.state.imageurl} />
                     </TouchableOpacity>
                 </View>
                 <View style={style.contain}>
                     <TextInput
+                    value={this.state.ten}
                         onChangeText={
                             (text) => {
                                 this.setState(
@@ -184,6 +194,7 @@ export default class EditContact extends Component {
                         } style={style.textinput} placeholder="Tên"></TextInput>
                        <Text style={style.textwarning}>{this.state.tenmessage}</Text> 
                     <TextInput
+                     value={this.state.sdt1}
                     keyboardType='numeric'
                         onChangeText={
                             (text) => {
@@ -199,6 +210,7 @@ export default class EditContact extends Component {
                         } style={style.textinput} placeholder="Số điện thoại 1"></TextInput>
                          <Text style={style.textwarning}>{this.state.sdt1message}</Text> 
                     <TextInput
+                     value={this.state.sdt2}
                     keyboardType='numeric'
                         onChangeText={
                             (text) => {
@@ -214,7 +226,7 @@ export default class EditContact extends Component {
                         } style={style.textinput} placeholder="Số điện thoại 2"></TextInput>
                          <Text style={style.textwarning}>{this.state.sdt2message}</Text> 
                     <TextInput
-
+                 value={this.state.email}
                         onChangeText={
                             (text) => {
                                 this.setState(
@@ -230,16 +242,22 @@ export default class EditContact extends Component {
                          <Text style={style.textwarning}>{this.state.emailmessage}</Text> 
                 </View>
             
-                <Image
-                    style={{ alignSelf: 'center', width: 100, height: 100 }} source={this.state.avatarSource} />
+               
             </View>
         );
     }
     componentDidMount(){
+
         const { navigation } = this.props;  
         const item = navigation.getParam('contactitem', 'NO-User');  
         this.setState({
-            contactitem:item
+            ten:item.ten,
+            sdt1:item.sdt1,
+            sdt2:item.sdt2,
+            email:item.email,
+            id:item.id,
+            imgoldlink:item.imglink,
+            imageurl:item.imglink != "" ? { uri: server.getServerIp()+'/React/avatar/up/' + item.imglink +'?time'+(new Date()).getTime()} : require('../img/user.png')
         })
        
     }

@@ -3,6 +3,7 @@ import { TextInput, View, Image, Button, StyleSheet, Text, TouchableOpacity } fr
 import ImagePicker from 'react-native-image-picker';
 import RNFetchBlob from 'react-native-fetch-blob'
 import ServerConfig from './ServerConfig'
+import { StackActions, NavigationActions } from 'react-navigation';
 var options = {
     title: 'Chọn ảnh đại diện',
     cancelButtonTitle:"Thoát",
@@ -29,7 +30,7 @@ export default class AddContact extends Component {
             sdt2message:"",
             emailmessage:"",
             iduser:"",
-           
+            imageurl:require('../img/user.png')
         }
     }
 
@@ -46,8 +47,8 @@ export default class AddContact extends Component {
                 const source = { uri: response.uri };
                 this.setState({
                     avatarSource: source,
-                    data: response.data
-
+                    data: response.data,
+                    imageurl:source
                 }
                 )
 
@@ -74,7 +75,12 @@ export default class AddContact extends Component {
         ]).then((resp) =>resp.json())
         .then((resjson)=>{
          if(resjson=="1"){
-             this.props.navigation.push('Home')
+            const resetAction = StackActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({ routeName: 'Home' })],
+              });
+              this.props.navigation.dispatch(resetAction)
+       
          }else{
              alert("Xảy ra lỗi vui lòng thử lại!")
          }
@@ -167,7 +173,7 @@ export default class AddContact extends Component {
                             this.showImagePicker.bind(this)
                         }>
                         <Image
-                            style={{ alignSelf: 'center', width: 100, height: 100 }} source={require("../img/user.png")} />
+                            style={{ alignSelf: 'center', width: 100, height: 100,borderRadius:50}} source={this.state.imageurl} />
                     </TouchableOpacity>
                 </View>
                 <View style={style.contain}>
@@ -231,9 +237,7 @@ export default class AddContact extends Component {
                         } style={style.textinput} placeholder="Email"></TextInput>
                          <Text style={style.textwarning}>{this.state.emailmessage}</Text> 
                 </View>
-            
-                <Image
-                    style={{ alignSelf: 'center', width: 100, height: 100 }} source={this.state.avatarSource} />
+        
             </View>
         );
     }
