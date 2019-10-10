@@ -147,7 +147,7 @@ export default class Home extends Component {
                         dropdownTextStyle={{ fontSize: 20 }}
                         onSelect={(id) => {
                             if (id == 0) {
-                                alert("gt")
+                                this.props.navigation.navigate('Aboutus')
                             }
                             if (id == 1) {
                                 this.props.navigation.navigate('Login')

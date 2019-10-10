@@ -224,7 +224,7 @@ export class Login extends Component {
       marginTop: 12,
       borderRadius:5,
       height: 45,
-      width: 300,
+      width: 325,
      
     },
     header: {

@@ -9,6 +9,8 @@ import RegisterScre from './Components/Register'
 import ContactDetail from './Components/ContactDetail'
 import ToQrcode from './Components/ToQrcode'
 import EditContact from './Components/EditContact'
+import Aboutus from './Components/Aboutus.js'
+
 import {ToastAndroid,Alert,BackHandler, BackAndroid
 } from 'react-native'
 
@@ -21,6 +23,7 @@ const AppNavigator = createStackNavigator({
   Home: Home,
   EditContact:EditContact,
   RegisterScre :RegisterScre,
+  Aboutus:Aboutus
 
 },{defaultNavigationOptions: {
   header:null,
