@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
-import ActionButton from 'react-native-action-button';
 import { CheckBox } from 'react-native-elements'
 import {
+  AsyncStorage,
   Alert, ActivityIndicator,
   Button, Image,
   StyleSheet, ImageBackground,
@@ -9,7 +9,6 @@ import {
   Text, View, TouchableHighlight, TouchableOpacity
 } from 'react-native';
 import ServerConfig from './ServerConfig'
-import { StackNavigator } from 'react-navigation';
 import NetInfo from "@react-native-community/netinfo";
 export class Login extends Component {
   constructor() {
@@ -23,7 +22,7 @@ export class Login extends Component {
       message: "",
       isprocessing: false,
       networkstate: false,
-      checked: true
+      checked: false
     }
 
   }
@@ -116,7 +115,14 @@ export class Login extends Component {
 
         })
         .catch((error) => {
-          alert(error)
+          this.setState(
+            () => {
+              return {
+                message: "Kiểm tra lại kết nối !"
+              }
+            }
+          );
+          this.setisprocessing();
         });
 
 
@@ -133,7 +139,10 @@ export class Login extends Component {
     }
   }
   chuyen() {
-
+    if(this.state.checked){
+      AsyncStorage.setItem('rememberme', "1");
+      AsyncStorage.setItem('iduser', this.state.iduser);
+    }
 
     this.props.navigation.navigate('Home', {
       iduser: this.state.iduser

@@ -4,17 +4,19 @@ import  {Login} from './Components/LoginForm';
 import { createAppContainer } from 'react-navigation';
 import { createStackNavigator } from 'react-navigation-stack';
 import Home from './Components/Home'
+import TempScreen from './Components/TempScreen'
 import AddContact from './Components/AddContact'
 import RegisterScre from './Components/Register'
 import ContactDetail from './Components/ContactDetail'
 import ToQrcode from './Components/ToQrcode'
 import EditContact from './Components/EditContact'
 import Aboutus from './Components/Aboutus.js'
-
+import {AsyncStorage} from 'react-native'
 import {ToastAndroid,Alert,BackHandler, BackAndroid
 } from 'react-native'
 
 const AppNavigator = createStackNavigator({
+  TempScreen,TempScreen,
   Login:Login,
   ContactDetail:ContactDetail,
   ToQrcode:ToQrcode,
@@ -23,8 +25,8 @@ const AppNavigator = createStackNavigator({
   Home: Home,
   EditContact:EditContact,
   RegisterScre :RegisterScre,
-  Aboutus:Aboutus
-
+  Aboutus:Aboutus,
+  
 },{defaultNavigationOptions: {
   header:null,
 },},{
@@ -39,13 +41,43 @@ export default class App extends Component{
       exit1:0,
       currentScreen:"Login"
     }
+  
   }
-  static defaultNavigationOptions= {
-    title: 'Welcome',
-  };
-  render(){
-    return(
+  chuyen(){
+    try{
+      this.props.navigation.navigate('Home', {
+        iduser: value1
+      })
+    }catch(LOL){
+      alert(LOL)
+    }
+  }
+  start(){
+    AsyncStorage.getItem('rememberme').then(
+      (value) => {
+       
+         if(value=="1"){
 
+          AsyncStorage.getItem('iduser').then(
+            (value1) => {
+              alert(value1)
+             this.chuyen()
+           
+            }
+        );
+         }
+        
+      }
+  );
+  }
+
+  // static defaultNavigationOptions= {
+  //   title: 'Welcome',
+  // };
+  render(){
+   
+    return(
+      
       <AppContainer onNavigationStateChange={(prevState, currentState) => {
       
        this.setState(
@@ -59,10 +91,13 @@ export default class App extends Component{
       
       }}></AppContainer>
 
-
+      
     );
+  
+    
   }
   componentDidMount(){
+    this.start.bind(this);
     this.backHandler = BackHandler.addEventListener('hardwareBackPress', this.handleBackPress);
   }
   handleBackPress = () => {

@@ -150,6 +150,8 @@ export default class Home extends Component {
                                 this.props.navigation.navigate('Aboutus')
                             }
                             if (id == 1) {
+
+                                AsyncStorage.setItem('rememberme', "0")
                                 this.props.navigation.navigate('Login')
                             }
 
