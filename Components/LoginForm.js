@@ -1,6 +1,8 @@
 import React, { Component } from 'react';
 import ActionButton from 'react-native-action-button';
-import {Alert,ActivityIndicator,
+import { CheckBox } from 'react-native-elements'
+import {
+  Alert, ActivityIndicator,
   Button, Image,
   StyleSheet, ImageBackground,
   TextInput,
@@ -12,136 +14,139 @@ import NetInfo from "@react-native-community/netinfo";
 export class Login extends Component {
   constructor() {
     super()
-    server=new ServerConfig()
+    server = new ServerConfig()
     this.checknetwork()
     this.state = {
-      iduser:null,
+      iduser: null,
       username: "admin",
       password: "1234",
       message: "",
-      isprocessing:false,
-      networkstate:false    }
-   
+      isprocessing: false,
+      networkstate: false,
+      checked: true
+    }
+
   }
-  setisprocessing(){
+  setisprocessing() {
     this.setState(
-      ()=>{
-        return{
-          isprocessing:!this.state.isprocessing
+      () => {
+        return {
+          isprocessing: !this.state.isprocessing
         }
       }
     )
   }
-  checknetwork(){
+  checknetwork() {
     NetInfo.isConnected.fetch().then(isConnected => {
       if (isConnected) {
         this.setState(
-          ()=>{
-            return{
-              networkstate:true
+          () => {
+            return {
+              networkstate: true
             }
           }
         )
-     
+
       } else {
         this.setState(
-          ()=>{
-            return{
-              networkstate:false,
-              
+          () => {
+            return {
+              networkstate: false,
+
             }
           }
         )
- 
+
       }
 
     });
   }
-  showprogress(){
-      if(this.state.isprocessing){
-    return(
-      <ActivityIndicator size="large" color="#24a0ed" />
-    );}
+  showprogress() {
+    if (this.state.isprocessing) {
+      return (
+        <ActivityIndicator size="large" color="#24a0ed" />
+      );
+    }
   }
- check = () => {
- this.checknetwork();
-   if(this.state.networkstate){
-    this.setState(
-      ()=>{
-        return{
-          isprocessing:true
-        }
-      }
-    )
-    fetch(server.getServerIp()+'/React/login.php', {
-      method: 'POST',
-      headers: {
-        Accept: 'application/json',
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify({
-        username: this.state.username,
-        password: this.state.password,
-
-      }),
-    }).then((response) => response.json())
-      .then((responseJson) => {
-        if (responseJson.toString().charAt(0) == "1") {
-        
-
-          this.setState(
-            ()=>{
-              var a=responseJson.toString()+""
-              return{
-                message:"",
-                iduser:a.substring(1,a.length)
-                
-              }
-            }
-          )
-          this.chuyen();
-        } else this.setState(
-          () => {
-            return {
-              message: "Vui lòng kiểm tra lại thông tin !"
-            }
-          }
-        );
-          this.setisprocessing();
-
-      })
-      .catch((error) => {
-        alert(error)
-      });
-
-
-
-   }else{
+  check = () => {
+    this.checknetwork();
+    if (this.state.networkstate) {
       this.setState(
-        ()=>{
-          return{
-            message:"Kiểm tra lại kết nối !",
-            isprocessing:false
+        () => {
+          return {
+            isprocessing: true
           }
         }
       )
-   }
-  }
-  chuyen(){
+      fetch(server.getServerIp() + '/React/login.php', {
+        method: 'POST',
+        headers: {
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          username: this.state.username,
+          password: this.state.password,
 
-  
-    this.props.navigation.navigate('Home',{
-      iduser:this.state.iduser
-    })
-   
+        }),
+      }).then((response) => response.json())
+        .then((responseJson) => {
+          if (responseJson.toString().charAt(0) == "1") {
+
+
+            this.setState(
+              () => {
+                var a = responseJson.toString() + ""
+                return {
+                  message: "",
+                  iduser: a.substring(1, a.length)
+
+                }
+              }
+            )
+            this.chuyen();
+          } else this.setState(
+            () => {
+              return {
+                message: "Vui lòng kiểm tra lại thông tin !"
+              }
+            }
+          );
+          this.setisprocessing();
+
+        })
+        .catch((error) => {
+          alert(error)
+        });
+
+
+
+    } else {
+      this.setState(
+        () => {
+          return {
+            message: "Kiểm tra lại kết nối !",
+            isprocessing: false
+          }
+        }
+      )
+    }
   }
-  
+  chuyen() {
+
+
+    this.props.navigation.navigate('Home', {
+      iduser: this.state.iduser
+    })
+
+  }
+
   render() {
-  
+
     return (
       <View style={style.body}>
-          <Image style={{width:300,height:150,alignSelf:'center',marginBottom:20}} source={require('../img/logo.png')}>
-          </Image>
+        <Image style={{ width: 300, height: 150, alignSelf: 'center', marginBottom: 20 }} source={require('../img/logo.png')}>
+        </Image>
         <TextInput
           ref="username"
           placeholder="Tên tài khoản"
@@ -180,7 +185,24 @@ export class Login extends Component {
           textContentType='password'
           value={this.state.password}
         />
-        <TouchableHighlight style={[this.style.button, { marginTop: 15 }]}
+        <View>
+          <CheckBox
+            checkedColor="white"
+            uncheckedColor="white"
+            onPress={
+              () =>
+                this.setState({
+                  checked: !this.state.checked
+                })
+            }
+            title='Ghi nhớ tôi'
+
+            textStyle={{ color: 'white' }}
+            containerStyle={{ backgroundColor: null, borderWidth: 0, marginLeft: 25 }}
+            checked={this.state.checked}
+          />
+        </View>
+        <TouchableHighlight style={[this.style.button, { marginTop: 5 }]}
           onPress={
             this.check.bind(this)
           }>
@@ -189,8 +211,8 @@ export class Login extends Component {
         <Text style={{ color: 'crimson', alignSelf: 'center', fontSize: 18, marginTop: 12 }}>
           {this.state.message}
         </Text>
-          {this.showprogress()}
-        <TouchableOpacity  style={{width:200,height:70,alignSelf:'center'}}
+        {this.showprogress()}
+        <TouchableOpacity style={{ width: 200, height: 70, alignSelf: 'center' }}
           onPress={
             () => this.props.navigation.navigate('RegisterScre')
           }>
@@ -204,7 +226,7 @@ export class Login extends Component {
   style = StyleSheet.create({
 
     body: {
-     backgroundColor: '#56beff',
+      backgroundColor: '#56beff',
       flex: 1,
       justifyContent: 'center'
     },
@@ -218,14 +240,14 @@ export class Login extends Component {
       backgroundColor: 'white'
     },
     button: {
-      backgroundColor:'#0275d8',
+      backgroundColor: '#0275d8',
       justifyContent: 'center',
       alignSelf: 'center',
       marginTop: 12,
-      borderRadius:5,
+      borderRadius: 5,
       height: 45,
       width: 325,
-     
+
     },
     header: {
       alignSelf: 'center',
@@ -234,16 +256,16 @@ export class Login extends Component {
       marginBottom: 20
     },
     img: {
-  
+
       borderColor: 'black',
       borderWidth: 1,
-  
+
       width: 60,
       height: 20,
       backgroundColor: 'black',
       borderRadius: 5
     }
-  
+
   })
-  
+
 }
