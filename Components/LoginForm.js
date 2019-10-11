@@ -17,8 +17,8 @@ export class Login extends Component {
     this.checknetwork()
     this.state = {
       iduser: null,
-      username: "admin",
-      password: "1234",
+      username: "",
+      password: "",
       message: "",
       isprocessing: false,
       networkstate: false,
